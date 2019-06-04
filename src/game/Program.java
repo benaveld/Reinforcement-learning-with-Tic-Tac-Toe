@@ -5,6 +5,7 @@
 
 package game;
 
+import game.ai.LearningPlayer;
 import processing.core.PApplet;
 
 public class Program extends PApplet {
@@ -35,7 +36,7 @@ public class Program extends PApplet {
 		board = new Board(this, 0, 0, screenWidth, screenHeight);
 
 		player1 = new HumanPlayer(XOEnum.X);
-		player2 = new HumanPlayer(XOEnum.O);
+		player2 = new LearningPlayer(XOEnum.O);
 	}
 
 	@Override
@@ -49,7 +50,11 @@ public class Program extends PApplet {
 
 		if (winner != XOEnum.empty) {
 			textSize(100);
-			text(winner.name() + " wins", width / 3f, height / 2f);
+			if (winner == XOEnum.draw) {
+				text(winner.name(), width / 3f, height / 2f);
+			} else {
+				text(winner.name() + " wins", width / 3f, height / 2f);
+			}
 			fill(0);
 
 			if (millis() - winSavedTime >= WIN_TIMEOUT) {
@@ -69,7 +74,13 @@ public class Program extends PApplet {
 		if (moved) {
 			firstPlayer = !firstPlayer;
 			winner = board.getWinner();
+			if (winner == XOEnum.empty && board.isDraw()) {
+				winner = XOEnum.draw;
+			}
+
 			if (winner != XOEnum.empty) {
+				firstPlayer = true; //remove later
+				
 				player1.reset(winner);
 				player2.reset(winner);
 				winSavedTime = millis();

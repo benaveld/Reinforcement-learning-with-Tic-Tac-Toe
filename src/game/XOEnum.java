@@ -6,5 +6,5 @@
 package game;
 
 public enum XOEnum {
-	X, O, empty
+	X, O, empty, draw
 }

@@ -18,7 +18,7 @@ public class Board {
 	private final int O_COLOR;
 
 	private int posX, posY, width, height;
-	private XOEnum[] spaces = new XOEnum[9];
+	private XOEnum[] spaces = new XOEnum[NR_SPACE_WIDTH * NR_SPACE_WIDTH];
 
 	public Board(PApplet p, int posX, int posY, int width, int height) {
 		this.posX = posX;
@@ -110,6 +110,15 @@ public class Board {
 		return winner;
 	}
 
+	public boolean isDraw() {
+		for (XOEnum e : spaces) {
+			if (e == XOEnum.empty) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void clear() {
 		for (int i = 0; i < spaces.length; i++) {
 			spaces[i] = XOEnum.empty;
@@ -124,6 +133,10 @@ public class Board {
 		} else {
 			spaces[space] = state;
 		}
+	}
+
+	public XOEnum[] getState() {
+		return spaces.clone();
 	}
 
 	public void set(int x, int y, XOEnum state) {
