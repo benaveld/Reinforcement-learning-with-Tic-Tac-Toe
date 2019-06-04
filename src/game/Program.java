@@ -12,11 +12,16 @@ public class Program extends PApplet {
 	public static final int screenWidth = 640;
 	public static final int screenHeight = 640;
 
-	private Board bord;
+	private final int WIN_TIMEOUT = 1000;
+
+	private Board board;
 	private boolean firstPlayer = true;
+	private XOEnum winner = XOEnum.empty;
 
 	private Player player1;
 	private Player player2;
+
+	private int winSavedTime = 0;
 
 	@Override
 	public void settings() {
@@ -27,30 +32,54 @@ public class Program extends PApplet {
 	@Override
 	public void setup() {
 		super.setup();
-		bord = new Board(this, 0, 0, screenWidth, screenHeight);
+		board = new Board(this, 0, 0, screenWidth, screenHeight);
 
-		player1 = new HumanPlayer();
-		player2 = new HumanPlayer();
+		player1 = new HumanPlayer(XOEnum.X);
+		player2 = new HumanPlayer(XOEnum.O);
 	}
 
 	@Override
 	public void draw() {
-		update();
+		if (winner == XOEnum.empty) {
+			update();
+		}
 
 		background(200);
-		bord.draw(this);
+		board.draw(this);
+
+		if (winner != XOEnum.empty) {
+			textSize(100);
+			text(winner.name() + " wins", width / 3f, height / 2f);
+			fill(0);
+
+			if (millis() - winSavedTime >= WIN_TIMEOUT) {
+				reset();
+			}
+		}
 	}
 
 	public void update() {
 		boolean moved;
 		if (firstPlayer) {
-			moved = player1.makeMove(this, bord, XOEnum.X);
+			moved = player1.makeMove(this, board);
 		} else {
-			moved = player2.makeMove(this, bord, XOEnum.O);
+			moved = player2.makeMove(this, board);
 		}
+
 		if (moved) {
 			firstPlayer = !firstPlayer;
+			winner = board.getWinner();
+			if (winner != XOEnum.empty) {
+				player1.reset(winner);
+				player2.reset(winner);
+				winSavedTime = millis();
+			}
 		}
+	}
+
+	public void reset() {
+		board.clear();
+		winner = XOEnum.empty;
 	}
 
 	public static void main(String[] args) {

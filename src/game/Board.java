@@ -86,6 +86,30 @@ public class Board {
 		p.shape(gridShape);
 	}
 
+	public XOEnum getWinner() {
+		XOEnum winner = XOEnum.empty;
+		for (int i = 0; i < 3; i++) {
+			if (spaces[i * 3] == spaces[i * 3 + 1] && spaces[i * 3 + 1] == spaces[i * 3 + 2]
+					&& spaces[i * 3] != XOEnum.empty) {
+				winner = spaces[i * 3];
+				break;
+			}
+
+			if (spaces[i] == spaces[i + 3] && spaces[i + 3] == spaces[i + 6] && spaces[i] != XOEnum.empty) {
+				winner = spaces[i];
+				break;
+			}
+
+			if (i != 1) {
+				if (spaces[i] == spaces[4] && spaces[4] == spaces[8 - i] && spaces[i] != XOEnum.empty) {
+					winner = spaces[i];
+					break;
+				}
+			}
+		}
+		return winner;
+	}
+
 	public void clear() {
 		for (int i = 0; i < spaces.length; i++) {
 			spaces[i] = XOEnum.empty;
@@ -95,7 +119,7 @@ public class Board {
 	public void set(int space, XOEnum state) {
 		if (spaces[space] != XOEnum.empty) {
 			throw new RuntimeException("Trying to fill an already filed board space.");
-		} else if(state == XOEnum.empty){
+		} else if (state == XOEnum.empty) {
 			throw new RuntimeException("Puting an empty in to the board.");
 		} else {
 			spaces[space] = state;
@@ -110,7 +134,7 @@ public class Board {
 		return spaces[space];
 	}
 
-	public XOEnum get(int x, int y, XOEnum state) {
+	public XOEnum get(int x, int y) {
 		return spaces[x + y * NR_SPACE_WIDTH];
 	}
 
@@ -129,5 +153,5 @@ public class Board {
 	public int getHeight() {
 		return height;
 	}
-	
+
 }
