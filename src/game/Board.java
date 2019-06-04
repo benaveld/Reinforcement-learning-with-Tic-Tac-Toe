@@ -10,7 +10,7 @@ import processing.core.PConstants;
 import processing.core.PShape;
 
 public class Board {
-	private static final int SPACE_WIDTH = 3;
+	public static final int NR_SPACE_WIDTH = 3;
 	private static final float STROKE_WEIGHT = 10f;
 	private static final int COLOR = 120;
 
@@ -34,18 +34,18 @@ public class Board {
 
 	@SuppressWarnings("incomplete-switch")
 	public void draw(PApplet p) {
-		int spaceWidth = Math.floorDiv(width, SPACE_WIDTH);
-		int spaceHeight = Math.floorDiv(height, SPACE_WIDTH);
+		int spaceWidth = Math.floorDiv(width, NR_SPACE_WIDTH);
+		int spaceHeight = Math.floorDiv(height, NR_SPACE_WIDTH);
 
 		PShape gridShape = p.createShape(PApplet.GROUP);
-		for (int dx = spaceWidth; dx <= width - SPACE_WIDTH; dx += spaceWidth) {
+		for (int dx = spaceWidth; dx <= width - NR_SPACE_WIDTH; dx += spaceWidth) {
 			PShape line = p.createShape(PConstants.LINE, posX + dx, posY, posX + dx, posY + height);
 			line.setStroke(COLOR);
 			line.setStrokeWeight(STROKE_WEIGHT);
 			gridShape.addChild(line);
 		}
 
-		for (int dy = spaceHeight; dy <= height - SPACE_WIDTH; dy += spaceHeight) {
+		for (int dy = spaceHeight; dy <= height - NR_SPACE_WIDTH; dy += spaceHeight) {
 			PShape line = p.createShape(PConstants.LINE, posX, posY + dy, posX + width, posY + dy);
 			line.setStroke(COLOR);
 			line.setStrokeWeight(STROKE_WEIGHT);
@@ -54,8 +54,8 @@ public class Board {
 
 		int spacing = (int) (Math.ceil(STROKE_WEIGHT) * 2);
 		for (int i = 0; i < spaces.length; i++) {
-			int x = Math.floorMod(i, SPACE_WIDTH) * spaceWidth + posX;
-			int y = Math.floorDiv(i, SPACE_WIDTH) * spaceHeight + posY;
+			int x = Math.floorMod(i, NR_SPACE_WIDTH) * spaceWidth + posX;
+			int y = Math.floorDiv(i, NR_SPACE_WIDTH) * spaceHeight + posY;
 
 			switch (spaces[i]) {
 			case X:
@@ -93,11 +93,17 @@ public class Board {
 	}
 
 	public void set(int space, XOEnum state) {
-		spaces[space] = state;
+		if (spaces[space] != XOEnum.empty) {
+			throw new RuntimeException("Trying to fill an already filed board space.");
+		} else if(state == XOEnum.empty){
+			throw new RuntimeException("Puting an empty in to the board.");
+		} else {
+			spaces[space] = state;
+		}
 	}
 
 	public void set(int x, int y, XOEnum state) {
-		spaces[x + y * SPACE_WIDTH] = state;
+		set(x + y * NR_SPACE_WIDTH, state);
 	}
 
 	public XOEnum get(int space) {
@@ -105,6 +111,23 @@ public class Board {
 	}
 
 	public XOEnum get(int x, int y, XOEnum state) {
-		return spaces[x + y * SPACE_WIDTH];
+		return spaces[x + y * NR_SPACE_WIDTH];
 	}
+
+	public int getX() {
+		return posX;
+	}
+
+	public int getY() {
+		return posY;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+	
 }
