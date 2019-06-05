@@ -5,6 +5,9 @@
 
 package game.ai;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -16,27 +19,39 @@ import game.XOEnum;
 
 public class LearningPlayer extends Player {
 
-	private static final int START_NR = 1;
-	private static final int WIN_INCRES = 3;
-	private static final int LOSE_DECRES = 1;
+	public static final int START_NR = 1;
+	public static final int WIN_INCRES = 3;
+	public static final int LOSE_DECRES = 1;
+	public static final int DRAW_INCRES = 1;
 
-	private Collection<ProbiliblityTable> states = new LinkedList<>();
+	Collection<ProbiliblityTable> states = new LinkedList<>();
 	private Collection<ProbiliblityTable> history = new LinkedList<>();
 
 	public LearningPlayer(XOEnum me) {
 		super(me);
 	}
+	
+	public LearningPlayer(XOEnum me, boolean loadSave) {
+		super(me);
+		if(loadSave) {
+			try {
+				states = IOAI.load(me);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	public boolean makeMove(Program p, Board board) {
 		ProbiliblityTable pro = null;
-		for(ProbiliblityTable prob : states) {
-			if(Arrays.equals(prob.boardState, board.getState())) {
+		for (ProbiliblityTable prob : states) {
+			if (Arrays.equals(prob.boardState, board.getState())) {
 				pro = prob;
 				break;
 			}
 		}
-		
+
 		if (pro == null) {
 			pro = new ProbiliblityTable(board.getState());
 			states.add(pro);
@@ -52,7 +67,11 @@ public class LearningPlayer extends Player {
 			choise = sum;
 		}
 
-		board.set(pro.getMatch(choise), me);
+		if (sum <= 0) {
+			board.set(pro.getRandom(), me);
+		} else {
+			board.set(pro.getMatch(choise), me);
+		}
 		history.add(pro);
 
 		for (int i = 0; i < 9; i += 3) {
@@ -65,46 +84,19 @@ public class LearningPlayer extends Player {
 
 	@Override
 	public void reset(XOEnum winner) {
-		if (winner != XOEnum.draw) {
-			for (ProbiliblityTable pro : history) {
-				if (winner == me) {
-					pro.probs[pro.lastPick] += WIN_INCRES;
-				} else {
-					pro.probs[pro.lastPick] -= LOSE_DECRES;
-				}
-			}
+		for (ProbiliblityTable pro : history) {
+			pro.update(winner, me);
 		}
 
 		history = new LinkedList<>();
-	}
-
-	private class ProbiliblityTable {
-		int[] probs;
-		int lastPick = -1;
-		XOEnum[] boardState;
-
-		// Fills the array with START_NR where ther is a leigal move.
-		ProbiliblityTable(XOEnum[] state) {
-			this.boardState = state.clone();
-			probs = new int[state.length];
-			for (int i = 0; i < state.length; i++) {
-				if (state[i] == XOEnum.empty) {
-					probs[i] = START_NR;
-				} else {
-					probs[i] = 0;
-				}
-			}
-		}
-
-		int getMatch(int choise) {
-			for (int i = 0; i < probs.length; i++) {
-				choise -= probs[i];
-				if (choise <= 0) {
-					lastPick = i;
-					return i;
-				}
-			}
-			throw new RuntimeException("Choise is heigher then the sum of probs.");
+		try {
+			IOAI.save(this);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 	}
+
+	
 }

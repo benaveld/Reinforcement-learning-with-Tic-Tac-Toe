@@ -36,7 +36,7 @@ public class Program extends PApplet {
 		board = new Board(this, 0, 0, screenWidth, screenHeight);
 
 		player1 = new HumanPlayer(XOEnum.X);
-		player2 = new LearningPlayer(XOEnum.O);
+		player2 = new LearningPlayer(XOEnum.O, true);
 	}
 
 	@Override
@@ -58,6 +58,7 @@ public class Program extends PApplet {
 			fill(0);
 
 			if (millis() - winSavedTime >= WIN_TIMEOUT) {
+				System.out.println("New Game");
 				reset();
 			}
 		}
@@ -79,8 +80,6 @@ public class Program extends PApplet {
 			}
 
 			if (winner != XOEnum.empty) {
-				firstPlayer = true; //remove later
-				
 				player1.reset(winner);
 				player2.reset(winner);
 				winSavedTime = millis();
