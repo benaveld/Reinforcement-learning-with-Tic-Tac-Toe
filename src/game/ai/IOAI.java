@@ -31,43 +31,43 @@ public class IOAI {
 	public static Collection<ProbiliblityTable> load(XOEnum me) throws IOException {
 		Collection<ProbiliblityTable> states = new LinkedList<ProbiliblityTable>();
 		if (saveFile.exists()) {
-			BufferedReader br = new BufferedReader(new FileReader(saveFile));
-			String line;
-			while ((line = br.readLine()) != null) {
-				int i = 0;
-				ProbiliblityTable prob = new ProbiliblityTable();
-				// boolean part1 = true;
-				String parts[] = line.split(";");
+			try (BufferedReader br = new BufferedReader(new FileReader(saveFile))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					int i = 0;
+					ProbiliblityTable prob = new ProbiliblityTable();
+					// boolean part1 = true;
+					String parts[] = line.split(";");
 
-				for (char c : parts[0].toCharArray()) {
-					switch (c) {
-					case ' ':
-						prob.boardState[i++] = XOEnum.empty;
-						break;
+					for (char c : parts[0].toCharArray()) {
+						switch (c) {
+						case ' ':
+							prob.boardState[i++] = XOEnum.empty;
+							break;
 
-					case 'X':
-						prob.boardState[i++] = XOEnum.X;
-						break;
+						case 'X':
+							prob.boardState[i++] = XOEnum.X;
+							break;
 
-					case 'O':
-						prob.boardState[i++] = XOEnum.O;
-						break;
+						case 'O':
+							prob.boardState[i++] = XOEnum.O;
+							break;
 
-					default:
+						default:
+							throw new IOException("Not compatible data file.");
+						}
+					}
+
+					String[] strProbs = parts[1].split(",");
+					if (strProbs.length != prob.probs.length) {
 						throw new IOException("Not compatible data file.");
 					}
+					for (i = 0; i < prob.probs.length; i++) {
+						prob.probs[i] = Integer.parseInt(strProbs[i]);
+					}
+					states.add(prob);
 				}
-				
-				String[] strProbs = parts[1].split(",");
-				if(strProbs.length != prob.probs.length) {
-					throw new IOException("Not compatible data file.");
-				}
-				for(i = 0; i < prob.probs.length; i++) {
-					prob.probs[i] = Integer.parseInt(strProbs[i]);
-				}
-				states.add(prob);
 			}
-			br.close();
 			System.out.println("Loaded save file.");
 		}
 		return states;

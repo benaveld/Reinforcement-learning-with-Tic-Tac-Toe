@@ -1,7 +1,7 @@
 # Reinforcement-learning-with-Tic-Tac-Toe
 
 ## Prerequisites
-* Java Runtime Environment Version 8
+* Java Runtime Environment Version 9
 * Processing core.jar file
 
 ## How to run

@@ -86,9 +86,10 @@ public class LearningPlayer extends Player {
 		return true;
 	}
 
+	//Update the probiliblitys for the used move based on if the AI won.
+	//clears the history the make way for a new game.
 	@Override
 	public void reset(XOEnum winner) {
-		//Update the probiliblitys for the used move based on if the AI won.
 		for (ProbiliblityTable pro : history) {
 			pro.update(winner, me);
 		}

@@ -1,3 +1,8 @@
+//Gruppnummer: 8
+//Benjamin Avery
+//Ludvig Svee
+//Sebastian Gieser
+
 package game.ai;
 
 import game.XOEnum;
