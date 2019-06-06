@@ -42,6 +42,8 @@ public class LearningPlayer extends Player {
 		}
 	}
 
+	//Finndes the apropriet ProbiliblityTable and picks an empty space based
+	//the included values
 	@Override
 	public boolean makeMove(Program p, Board board) {
 		ProbiliblityTable pro = null;
