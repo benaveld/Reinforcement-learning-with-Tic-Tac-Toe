@@ -5,10 +5,11 @@
 * Processing core.jar file
 
 ## How to run
-In the terminal type
-'''
+Download the AI3.jar file.
+Open the terminal and navigate to the folder then enter:
+```
 java -jar AI3.jar
-'''
+```
 
 ## Compile
 You need the JDK to compile the source code.
