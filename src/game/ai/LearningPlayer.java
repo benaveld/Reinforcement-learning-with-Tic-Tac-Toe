@@ -66,7 +66,8 @@ public class LearningPlayer extends Player {
 		if (choise > sum) {
 			choise = sum;
 		}
-
+		
+		//if every probability is 0 then pick one at random.
 		if (sum <= 0) {
 			board.set(pro.getRandom(), me);
 		} else {
@@ -74,6 +75,7 @@ public class LearningPlayer extends Player {
 		}
 		history.add(pro);
 
+		//Printing for debuging purpeses
 		for (int i = 0; i < 9; i += 3) {
 			System.out.format("%d %d %d%n", pro.probs[i], pro.probs[i + 1], pro.probs[i + 2]);
 		}
@@ -84,6 +86,7 @@ public class LearningPlayer extends Player {
 
 	@Override
 	public void reset(XOEnum winner) {
+		//Update the probiliblitys for the used move based on if the AI won.
 		for (ProbiliblityTable pro : history) {
 			pro.update(winner, me);
 		}
